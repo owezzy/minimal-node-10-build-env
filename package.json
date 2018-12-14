@@ -1,23 +1,58 @@
 {
   "name": "minimal-node-10-build-env",
   "version": "10.14.1",
-  "description": "> Alpine-based Node build environment with npm, bash and git",
+  "description": "Containerized Minimal express Web Server using Alpine-based Node build environment.",
   "main": "index.js",
   "scripts": {
-    "build": "docker image build .",
-    "prepush-tag": "git push origin :refs/tags/$npm_package_version",
-    "push-tag": "git tag -fa $npm_package_version",
-    "postpush-tag": "git push origin master --tags"
+    "start": "node index",
+    "test": "jasmine",
+    "predocker:build": "npm test",
+    "docker:build": "cross-conf-env docker image build . -t $npm_package_config_imageRepo:$npm_package_version",
+    "postdocker:build": "npm run docker:tag",
+    "docker:tag": " cross-conf-env docker image tag $npm_package_config_imageRepo:$npm_package_version $npm_package_config_imageRepo:latest",
+    "docker:run": "run-s -c docker:clean docker:runHelper",
+    "docker:runHelper": "cross-conf-env docker run -e NODE_ENV=local --name $npm_package_config_imageName -d -p $npm_package_config_imagePort:3000 $npm_package_config_imageRepo",
+    "predocker:publish": "echo Attention! Ensure `docker login` is correct.",
+    "docker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:$npm_package_version",
+    "postdocker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:latest",
+    "docker:clean": "cross-conf-env docker rm -f $npm_package_config_imageName",
+    "predocker:taillogs": "echo Web Server Logs:",
+    "docker:taillogs": "cross-conf-env docker logs -f $npm_package_config_imageName",
+    "docker:open:win": "echo Trying to launch on Windows && timeout 2 && start http://localhost:%npm_package_config_imagePort%",
+    "docker:open:mac": "echo Trying to launch on MacOS && sleep 2 && URL=http://localhost:$npm_package_config_imagePort && open $URL",
+    "docker:debugmessage": "echo Docker Debug Completed Successfully! Hit Ctrl+C to terminate log tailing.",
+    "predocker:debug": "run-s docker:build docker:run",
+    "docker:debug": "run-s -cs docker:open:win docker:open:mac docker:debugmessage docker:taillogs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/owezzy/minimal-node-10-build-env.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "node",
+    "apline",
+    "docker",
+    "express",
+    "web",
+    "server"],
+  "author": "Owen Adira",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/owezzy/minimal-node-10-build-env/issues"
   },
-  "homepage": "https://github.com/owezzy/minimal-node-10-build-env#readme"
-}
+  "homepage": "https://github.com/owezzy/minimal-node-10-build-env#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "chalk": "^2.4.1",
+    "compression": "^1.7.2",
+    "express": "^4.16.3",
+    "express-sslify": "^1.2.0",
+    "lodash": "^4.17.10",
+    "morgan": "^1.9.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "cross-conf-env": "^1.1.2",
+    "jasmine": "^3.1.0",
+    "npm-run-all": "^4.1.3"
+  }}

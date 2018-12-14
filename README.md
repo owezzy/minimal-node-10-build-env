@@ -1,6 +1,6 @@
 # minimal-node-10-build-env
 
-> Alpine-based Node build environment with npm, bash and git
+> Containerized Minimal express Web Server using Alpine-based Node build environment.
 
 > Based on `node:10.14.1-alpine`
 
@@ -15,29 +15,14 @@ FROM minimal-node-10-build-env
 
 > Hint: Use `npm ci` to install npm packages to speed up your installs.
 
-## To build
+## How to Build, Run and Publish
+There are three scripts in `package.json`
+- `npm run docker:build` will rebuild the Docker image with any changes
+- `npm run docker:run` will run the Docker image locally without having to publish it first
+- `npm run docker:publish` will publish the image to http://hub.docker.com
 
-```
-npm run build
-```
+## Resources
+  > The environment is configured following best practices from [NodeSource](https://nodesource.com/blog/8-protips-to-start-killing-it-when-dockerizing-node-js/).
 
-or
-
-
-```
-docker image build .
-```
-
-## To update git tag
-
-Any time there's a new version execute `npm run push-tag`
-
-
-> Only use when updating Alpine contents, but specific version of the base package remains the same
-
-```
-git push origin :refs/tags/<tagname>
-git tag -fa <tagname>
-git push origin master --tags
-```
-# minimal-node-10-build-env
+## Credits
+* [Doguhan Uluca](https://github.com/duluca/minimal-node-web-server.git)
