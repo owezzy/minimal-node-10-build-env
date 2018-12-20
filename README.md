@@ -1,4 +1,4 @@
-# minimal-node-10-build-env
+# minimal-node-express-env
 
 > Containerized Minimal express Web Server using Alpine-based Node build environment.
 
